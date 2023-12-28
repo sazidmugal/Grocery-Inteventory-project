@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add Grocery Item</title>
+    <link rel="stylesheet" th:href="@{/styles/style.css}" />
+</head>
+<body>
+    <div class="container">
+        <h2>Add Grocery Item</h2>
+        <form th:action="@{/grocery/add}" method="post" th:object="${groceryItemEntity}">
+            <label for="existingItems">Select Existing Item:</label>
+            <select id="existingItems" name="existingItems" th:onchange="updateFields()">
+                <option value="">-- Select Existing Item --</option>
+                <option th:each="item : ${predefinedItems}" th:value="${item}" th:text="${item}"></option>
+            </select><br/>
+
+            <div th:if="${#fields.hasErrors('name')}">
+                <span style="color: red" th:errors="*{name}"></span><br/>
+            </div>
+
+            <div th:unless="${groceryItem?.existingItems}">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" th:value="${groceryItem?.name}" required/><br/>
+            </div>
+
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" th:value="${groceryItem?.price}" step="0.01" required/><br/>
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" th:value="${groceryItem?.quantity}" required/><br/>
+
+            <button type="submit">Add Item</button>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        function updateFields() {
+            var dropdown = document.getElementById("existingItems");
+            var nameField = document.getElementById("name");
+
+            if (dropdown.value === "") {
+                nameField.required = true;
+                nameField.value = ''; // Clear the name field if an existing item is not selected
+            } else {
+                nameField.required = false;
+                nameField.value = dropdown.value; // Set the name field to the selected existing item
+            }
+        }
+    </script>
+</body>
+</html>
